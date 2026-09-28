@@ -1,0 +1,26 @@
+{
+  "name": "researchtex",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ResearchTex — A free, open-source LaTeX research and academic writing platform",
+  "scripts": {
+    "dev": "pnpm --filter @researchtex/web dev",
+    "dev:collab": "pnpm --filter @researchtex/collaboration dev",
+    "build": "pnpm --filter @researchtex/web build",
+    "lint": "pnpm --filter @researchtex/web lint",
+    "typecheck": "pnpm --filter @researchtex/web typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "// turbo": "Turborepo removed temporarily — @turbo/windows-64 binary times out on slow connections. Re-add: pnpm add -Dw turbo",
+  "// swc": "@next/swc-win32-x64-msvc skipped via .npmrc optional=false — Next.js falls back to Babel. Remove optional=false in .npmrc to enable SWC.",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@11.7.0"
+}

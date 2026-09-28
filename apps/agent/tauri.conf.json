@@ -1,0 +1,28 @@
+{
+  "productName": "ResearchTex Agent",
+  "version": "0.1.0",
+  "identifier": "com.researchtex.agent",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../web/out"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "ResearchTex Agent",
+        "width": 400,
+        "height": 300,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all"
+  }
+}

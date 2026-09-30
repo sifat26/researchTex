@@ -14,6 +14,7 @@ pub enum CompileStatus {
 
 #[derive(Debug, Clone)]
 pub struct JobState {
+    #[allow(dead_code)]
     pub id: String,
     pub status: CompileStatus,
     // Using a simple flag for cancellation to keep it straightforward for Phase 4

@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use which::which;
-use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CompilerInfo {

@@ -1,5 +1,5 @@
 use super::process::{execute_compiler, ProcessResult};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::jobs::manager::JobManager;
 use crate::compiler::parser::{parse_latex_logs, CompileLogEntry};
@@ -38,8 +38,8 @@ pub async fn run_pipeline(
         return Ok(build_result(false, res, total_duration, combined_stdout, combined_stderr, None, root_file));
     }
 
-    let mut needs_biber = combined_stdout.contains("Please (re)run Biber");
-    let mut needs_bibtex = run_bib || combined_stdout.contains("No file") && combined_stdout.contains(".bbl");
+    let needs_biber = combined_stdout.contains("Please (re)run Biber");
+    let needs_bibtex = run_bib || combined_stdout.contains("No file") && combined_stdout.contains(".bbl");
     let mut needs_rerun = combined_stdout.contains("Rerun to get cross-references right") || 
                           combined_stdout.contains("There were undefined references");
 
@@ -76,7 +76,7 @@ pub async fn run_pipeline(
     }
 
     let success = res.success;
-    let exit_code = res.exit_code.unwrap_or(1);
+    let _exit_code = res.exit_code.unwrap_or(1);
     
     // Check if PDF was generated
     let pdf_filename = format!("{}.pdf", base_name);

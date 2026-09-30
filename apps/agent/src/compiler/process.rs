@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Stdio;
 use tokio::process::Command;
 use std::time::Instant;
@@ -56,7 +56,7 @@ pub async fn execute_compiler(
 
     let start = Instant::now();
 
-    let mut child = Command::new(engine)
+    let child = Command::new(engine)
         .current_dir(&working_dir)
         .args(&args)
         .stdout(Stdio::piped())

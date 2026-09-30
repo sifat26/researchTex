@@ -19,6 +19,8 @@ pub fn parse_latex_logs(stdout: &str, stderr: &str) -> Vec<CompileLogEntry> {
     while i < lines.len() {
         let line = lines[i].trim();
         
+    let mut already_handled = false;
+        
         if line.starts_with("! ") {
             // LaTeX Error
             let message = line.strip_prefix("! ").unwrap_or(line).to_string();
@@ -43,13 +45,7 @@ pub fn parse_latex_logs(stdout: &str, stderr: &str) -> Vec<CompileLogEntry> {
                 file: None, // Complex to parse standard latex file context without file-line-error
                 line: line_num,
             });
-        } else if line.contains("Error:") || line.contains("error:") {
-            entries.push(CompileLogEntry {
-                level: "error".to_string(),
-                message: line.to_string(),
-                file: None,
-                line: None,
-            });
+            already_handled = true;
         } else if line.contains("Warning:") || line.contains("warning:") {
             entries.push(CompileLogEntry {
                 level: "warning".to_string(),
@@ -57,6 +53,7 @@ pub fn parse_latex_logs(stdout: &str, stderr: &str) -> Vec<CompileLogEntry> {
                 file: None,
                 line: None,
             });
+            already_handled = true;
         } else if line.starts_with("Overfull") || line.starts_with("Underfull") {
             entries.push(CompileLogEntry {
                 level: "warning".to_string(),
@@ -64,28 +61,35 @@ pub fn parse_latex_logs(stdout: &str, stderr: &str) -> Vec<CompileLogEntry> {
                 file: None,
                 line: None,
             });
+            already_handled = true;
         }
         
         // Handle -file-line-error format: "file.tex:123: Error message"
-        if let Some(colon1) = line.find(':') {
-            if let Some(colon2) = line[colon1+1..].find(':') {
-                let file = &line[..colon1];
-                let line_str = &line[colon1+1..colon1+1+colon2];
-                let msg = &line[colon1+1+colon2+1..].trim();
-                
-                if let Ok(line_num) = line_str.parse::<u32>() {
-                    let level = if msg.to_lowercase().contains("warning") {
-                        "warning"
-                    } else {
-                        "error"
-                    };
+        // Only parse this format if the line wasn't already handled above to avoid duplicates
+        if !already_handled {
+            if let Some(colon1) = line.find(':') {
+                if let Some(colon2) = line[colon1+1..].find(':') {
+                    let file = &line[..colon1];
+                    let line_str = &line[colon1+1..colon1+1+colon2];
+                    let msg = line[colon1+1+colon2+1..].trim();
                     
-                    entries.push(CompileLogEntry {
-                        level: level.to_string(),
-                        message: msg.to_string(),
-                        file: Some(file.to_string()),
-                        line: Some(line_num),
-                    });
+                    // Must have a non-empty file name and a valid message
+                    if !file.is_empty() && !msg.is_empty() {
+                        if let Ok(line_num) = line_str.parse::<u32>() {
+                            let level = if msg.to_lowercase().contains("warning") {
+                                "warning"
+                            } else {
+                                "error"
+                            };
+                            
+                            entries.push(CompileLogEntry {
+                                level: level.to_string(),
+                                message: msg.to_string(),
+                                file: Some(file.to_string()),
+                                line: Some(line_num),
+                            });
+                        }
+                    }
                 }
             }
         }

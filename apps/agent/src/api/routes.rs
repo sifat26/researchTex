@@ -4,13 +4,13 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::path::PathBuf;
 use std::fs;
 use uuid::Uuid;
 use base64::{Engine as _, engine::general_purpose};
 
-use crate::compiler::detector::{get_health, AgentHealth};
+use crate::compiler::detector::get_health;
 use crate::compiler::pipeline::run_pipeline;
 use crate::jobs::manager::{cancel_job, set_job_status, CompileStatus, JobManager};
 use crate::security::validation::validate_and_join_path;
@@ -20,20 +20,6 @@ pub struct AppState {
     pub jobs: JobManager,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct ProjectFile {
-    pub path: String,
-    pub content: String,
-    pub is_binary: bool,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct CompileRequest {
-    pub root_file: String,
-    pub engine: String,
-    pub run_bib: bool,
-    pub files: Option<Vec<ProjectFile>>,
-}
 
 #[derive(Debug, Serialize)]
 pub struct CompileResponse {

@@ -11,12 +11,14 @@ out/
 dist/
 build/
 
-# Environment variables
+# Environment variables — NEVER commit secrets
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+# Allow collaboration app's .env (it only stores port/internal key)
+# !apps/collaboration/.env  # Uncomment to track collab .env if desired
 
 # OS
 .DS_Store
@@ -53,3 +55,21 @@ target/
 # Misc
 .cache/
 coverage/
+
+# pnpm stray temp lock files
+pnpm-lock.yaml.*
+
+# LaTeX auxiliary files (if any checked-in LaTeX docs exist)
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.out
+*.toc
+*.lot
+*.lof
+*.blg
+*.bbl
+*.bcf
+*.run.xml

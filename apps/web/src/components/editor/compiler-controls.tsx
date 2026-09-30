@@ -19,6 +19,8 @@ export function CompilerControls({ projectId, rootFile }: { projectId: string; r
   const [engine, setEngine] = useState<CompilerEngine>("pdflatex");
   const clientRef = useRef(new LocalCompilerClient(projectId));
   const currentJobIdRef = useRef<string | null>(null);
+  // Track current blob URL so we can revoke it before creating a new one (prevents memory leaks)
+  const currentBlobUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -79,13 +81,19 @@ export function CompilerControls({ projectId, rootFile }: { projectId: string; r
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: "application/pdf" });
-        const blobUrl = URL.createObjectURL(blob);
         
-        // Note: In a real app we should revokeObjectURL for the old URL before setting a new one
+        // Revoke previous blob URL to prevent memory leak
+        if (currentBlobUrlRef.current) {
+          URL.revokeObjectURL(currentBlobUrlRef.current);
+        }
+        const blobUrl = URL.createObjectURL(blob);
+        currentBlobUrlRef.current = blobUrl;
         setPdfUrl(blobUrl);
         setCompileStatus("success");
       } else {
-        setCompileError("Compilation failed.");
+        // Show the first error from log entries if available, otherwise a generic message
+        const firstError = result.logEntries?.find(e => e.level === "error");
+        setCompileError(firstError?.message || "Compilation failed. Check the log panel for details.");
         setCompileStatus("error");
       }
     } catch (err: any) {

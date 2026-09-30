@@ -43,6 +43,19 @@ export function CompilerControls({ projectId, rootFile }: { projectId: string; r
     };
   }, []);
 
+  // Ctrl+Enter global shortcut to compile (Overleaf-style)
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isCompiling) {
+        e.preventDefault();
+        handleCompile();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCompiling, isAgentConnected]);
+
   const handleCompile = async () => {
     if (!isAgentConnected) {
       setCompileError("ResearchTex Compiler Agent is not running. Please start the ResearchTex desktop agent and try again.");
@@ -156,7 +169,7 @@ export function CompilerControls({ projectId, rootFile }: { projectId: string; r
           Cancel
         </Button>
       ) : (
-        <Button size="sm" className="h-8 text-xs font-normal w-24" onClick={handleCompile}>
+        <Button size="sm" className="h-8 text-xs font-normal w-24" onClick={handleCompile} title="Compile (Ctrl+Enter)">
           Compile
         </Button>
       )}
